@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "mdb-react-ui-kit": "^4.2.0",
     "next": "12.3.1",
     "react": "18.2.0",
+    "react-bootstrap": "^2.5.0",
     "react-dom": "18.2.0",
     "react-grid-system": "^8.1.6",
     "react-hook-form": "^7.38.0",
