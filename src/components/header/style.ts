@@ -1,7 +1,13 @@
 import { Container } from 'react-grid-system'
 import styled from 'styled-components'
 
-export const Label = styled.p``
+export const Label = styled.p`
+  &:hover {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`
 export const WrapperContainer = styled(Container)`
   background: '#FFFF';
   minheight: '70px';
