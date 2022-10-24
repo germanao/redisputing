@@ -8,7 +8,7 @@ import Document, {
   NextScript
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-import Header from '../components'
+import Header from '../components/header'
 
 export default class MyDocument extends Document {
   static async getInitialProps(
@@ -49,10 +49,16 @@ export default class MyDocument extends Document {
             rel="stylesheet"
           />
 
+          <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossOrigin="anonymous"
+          />
+
           <link rel="icon" href="https://rocketseat.com.br/favicon.ico" />
         </Head>
         <body>
-          <Header />
           <Main />
           <NextScript />
         </body>
