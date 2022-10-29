@@ -51,20 +51,20 @@ const Home: React.FC = () => {
 
 export default Home
 
-// export const getServersideProps: GetServerSideProps = async ctx => {
-//   const { ['redisputing.token']: token } = parseCookies(ctx)
+export const getServersideProps: GetServerSideProps = async ctx => {
+  const { ['redisputing.token']: token } = parseCookies(ctx)
 
-//   console.log(token)
-//   if (!token) {
-//     return {
-//       redirect: {
-//         destination: '/login',
-//         permanent: false
-//       }
-//     }
-//   }
+  console.log(token)
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    }
+  }
 
-//   return {
-//     props: {}
-//   }
-// }
+  return {
+    props: {}
+  }
+}

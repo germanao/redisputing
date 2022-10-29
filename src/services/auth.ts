@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 type SignInRequestData = {
   email: string
   password: string
+  name?: string
 }
 
 export async function signInRequest(data: SignInRequestData) {
@@ -11,7 +12,7 @@ export async function signInRequest(data: SignInRequestData) {
   return {
     token: uuid(),
     user: {
-      name: 'Germano Benini',
+      name: data?.name || 'Germano Benini',
       email: 'germano_benini@hotmail.com'
     }
   }

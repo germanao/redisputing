@@ -8,7 +8,6 @@ import Document, {
   NextScript
 } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
-import Header from '../components/header'
 
 export default class MyDocument extends Document {
   static async getInitialProps(

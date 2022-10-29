@@ -7,7 +7,15 @@ import Image from 'next/image'
 
 export const Footer: React.FC = () => {
   return (
-    <footer style={{ bottom: 0, position: 'fixed', left: 0, width: '100%' }}>
+    <footer
+      style={{
+        bottom: 0,
+        // position: 'fixed',
+        left: 0,
+        width: '100%',
+        marginTop: '40px'
+      }}
+    >
       <Container style={{ alignSelf: 'end' }}>
         <Row style={{ padding: 0, margin: 0 }}>
           <div
