@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 import Button from 'react-bootstrap/Button'
-
+import Router from 'next/router'
 import Image from 'next/image'
 import { Label, WrapperContainer } from './style'
 import { AuthContext } from '../../contexts/AuthContext'
@@ -42,13 +42,15 @@ const Header: React.FC = () => {
           <Col xs={12} sm={6}>
             <Row style={{ justifyContent: 'center' }}>
               <Col xs={12} sm={4} lg={1.15} style={{ textAlign: 'center' }}>
-                <Label>Home</Label>
+                <Label onClick={() => Router.push('/home')}>Home</Label>
               </Col>
               <Col xs={12} sm={4} lg={1.15} style={{ textAlign: 'center' }}>
-                <Label>Solicitações</Label>
+                <Label onClick={() => Router.push('/solicitacoes')}>
+                  Solicitações
+                </Label>
               </Col>
               <Col xs={12} sm={4} lg={1.15} style={{ textAlign: 'center' }}>
-                <Label>Ajuda</Label>
+                <Label onClick={() => Router.push('/home')}>Ajuda</Label>
               </Col>
             </Row>
           </Col>

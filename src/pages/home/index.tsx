@@ -5,6 +5,7 @@ import { parseCookies } from 'nookies'
 import React, { useContext, useEffect } from 'react'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../contexts/AuthContext'
+import { api, apiAuth } from '../../services/api'
 
 const Home: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext)
@@ -15,7 +16,7 @@ const Home: React.FC = () => {
     if (!isAuthenticated) {
       router.push('/login')
     }
-  }, [])
+  }, [isAuthenticated, router])
 
   return (
     <>

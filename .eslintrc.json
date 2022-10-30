@@ -19,6 +19,7 @@
     },
     "plugins": [
         "react",
+        "react-hooks",
         "@typescript-eslint",
         "prettier"
     ],
@@ -26,6 +27,8 @@
         "prettier/prettier": "error",
         "space-before-function-paren": "off",
         "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "react-hooks/exhaustive-deps": "warn"
+
     }
 }

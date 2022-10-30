@@ -1,59 +1,89 @@
 import Router from 'next/router'
 import { parseCookies, setCookie } from 'nookies'
 import { createContext, ReactNode, useEffect, useState } from 'react'
-import { api } from '../services/api'
-import { recoverUserInformation, signInRequest } from '../services/auth'
-
-type AuthContextType = {
-  isAuthenticated: boolean
-  user: User
-  signIn: (data: SignInData) => Promise<void>
-}
-
-type SignInData = {
-  email: string
-  password: string
-}
-
-type User = {
-  email: string
-  name: string
-}
+import { AuthContextType, IAuthData, SignInRequestData } from '../interfaces'
+import { User } from '../interfaces/IUser'
+import { api, apiAuth } from '../services/api'
+import {
+  recoverUserInformation,
+  registerInRequest,
+  signInRequest
+} from '../services/auth'
 
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<IAuthData>(null)
 
   const isAuthenticated = !!user
+  // console.log(isAuthenticated)
+  // console.log(user)
 
   useEffect(() => {
-    const { 'redisputing.token': token } = parseCookies()
+    const getInfo = async () => {
+      const { ['redisputing.token']: token } = parseCookies()
 
-    if (token) {
-      recoverUserInformation().then(response => setUser(response.user))
+      if (token) {
+        console.log(token)
+        const userData = await recoverUserInformation()
+        if (userData) {
+          const userDTO: IAuthData = {
+            _id: userData._id,
+            name: userData.name,
+            email: userData.email
+          }
+          console.log(userDTO)
+          setUser(userDTO)
+        }
+      }
     }
+    // if (token) {
+    //   const data = recoverUserInformation(user?._id)
+    //   console.log(data)
+    // } else {
+    //   console.log('Não entrouy')
+    // }
+    getInfo()
   }, [])
 
-  async function signIn({ email, password }: SignInData) {
-    const { token, user } = await signInRequest({
+  async function signIn({ email, password }: SignInRequestData) {
+    const userData = await signInRequest({
       email,
       password
     })
 
-    setCookie(undefined, 'redisputing.token', token, {
-      maxAge: 60 * 60 * 1 // 1 hour
+    setCookie(undefined, 'redisputing.token', userData.token, {
+      maxAge: 60 * 360 * 1 // 1 hour
     })
 
-    api.defaults.headers['Authorization'] = `Bearer ${token}`
+    api.defaults.headers['Authorization'] = `Bearer ${userData.token}`
+    apiAuth.defaults.headers['Authorization'] = `Bearer ${userData.token}`
 
-    setUser(user)
+    setUser(userData)
 
     Router.push('/home')
   }
 
+  async function registerIn({ email, password, name }: SignInRequestData) {
+    try {
+      await registerInRequest({
+        email,
+        password,
+        name
+      })
+
+      try {
+        await signIn({ email, password })
+      } catch (err) {
+        console.log(err)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signIn, registerIn }}>
       {children}
     </AuthContext.Provider>
   )

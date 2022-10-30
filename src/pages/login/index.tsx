@@ -15,10 +15,27 @@ const Login: React.FC = () => {
     formState: { errors }
   } = useForm()
 
-  const { signIn, isAuthenticated } = useContext(AuthContext)
-  const [checked, setChecked] = useState(false)
+  const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
+  const [checked, setChecked] = useState(true)
+  const [error, setError] = useState<boolean>(false)
   async function handleSignIn(data) {
-    await signIn(data)
+    if (checked) {
+      try {
+        await signIn(data)
+        setError(false)
+      } catch (err) {
+        console.log(err)
+        setError(true)
+      }
+    } else {
+      try {
+        await registerIn(data)
+        setError(false)
+      } catch (err) {
+        console.log(err)
+        setError(true)
+      }
+    }
   }
 
   const router = useRouter()
@@ -27,7 +44,11 @@ const Login: React.FC = () => {
     if (isAuthenticated) {
       router.push(process.env.NEXT_PUBLIC_ENV_HOME)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, router])
+
+  useEffect(() => {
+    setError(false)
+  }, [checked])
 
   return (
     <>
@@ -69,13 +90,13 @@ const Login: React.FC = () => {
                   <Col>
                     <Row justify="center">
                       <input
-                        {...register('nome')}
+                        {...register('name')}
                         type="nome"
                         id="nome-address"
                         autoComplete="nome"
                         required
                         placeholder="Insira seu nome"
-                        name="nome"
+                        name="name"
                       ></input>
                     </Row>
                   </Col>
@@ -138,9 +159,44 @@ const Login: React.FC = () => {
             </form>
           </Col>
         </Row>
+        {error ? (
+          checked ? (
+            <Row
+              justify="center"
+              style={{ margin: 0, marginTop: '10px', color: 'red' }}
+            >
+              <div>Usuário ou senha inválidos!</div>
+            </Row>
+          ) : (
+            <Row
+              justify="center"
+              style={{ margin: 0, marginTop: '10px', color: 'red' }}
+            >
+              <div>E-mail já cadastrado</div>
+            </Row>
+          )
+        ) : null}
       </Container>
     </>
   )
 }
 
 export default Login
+
+export const getServersideProps: GetServerSideProps = async ctx => {
+  const { ['redisputing.token']: token } = parseCookies(ctx)
+
+  console.log(token)
+  if (token) {
+    return {
+      redirect: {
+        destination: '/home',
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
+}
