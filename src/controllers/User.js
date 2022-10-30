@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   async create(req, res) {
@@ -30,6 +31,7 @@ module.exports = {
     }
 
     if (await user.matchPassword(password)) {
+      console.log(generateToken(user._id))
       res.status(200).json({
         _id: user._id,
         name: user.name,
@@ -57,6 +59,37 @@ module.exports = {
       res.status(201).json(updateUser);
     } catch (error) {
       res.status(400).json(error);
+    }
+  },
+  async getProfile(req, res) {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      try {
+        token = req.headers.authorization.split(" ")[1];
+        const decoded  = jwt.verify(token, process.env.JWT_SECRET);
+  
+        const id = decoded.id
+
+        const user = await User.findOne({id})
+  
+        if (user) {
+          const userResponse = {
+            _id: user._id,
+            name: user.name,
+            email: user.email
+          }
+          return res.json(userResponse);
+
+        } else {
+          res.status(401).json("Não autorizado, usuário não encontrado");
+        }
+      } catch (error) {
+        console.log(error)
+        res.status(401).json("Not authorized, no token");
+      }
     }
   },
 };
