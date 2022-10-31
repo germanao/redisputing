@@ -35,6 +35,5 @@ export async function registerInRequest(data: SignInRequestData) {
 
 export async function recoverUserInformation() {
   const { data: response } = await apiAuth.get<IAuthPut>(`/getProfile`)
-  console.log(response)
   return response
 }
