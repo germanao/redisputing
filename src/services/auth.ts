@@ -12,7 +12,7 @@ export async function signInRequest(data: SignInRequestData) {
     password
   })
 
-  console.log(response)
+  // console.log(response)
 
   return response
 }
