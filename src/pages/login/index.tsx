@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Container, Row, Col } from 'react-grid-system'
-import { Rectangle } from './style'
 import { Button } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { AuthContext } from '../../contexts/AuthContext'
