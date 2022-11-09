@@ -63,7 +63,7 @@ const FormComponent: React.FC = () => {
         <Row style={{ marginRight: 0 }}>
           <Col xs={12}>
             <Form onSubmit={handleSubmit(onSubmit)}>
-              <Col xs={10}>
+              <Col xs={12}>
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Informe o fornecedor</Form.Label>
                   <Form.Control
@@ -73,7 +73,7 @@ const FormComponent: React.FC = () => {
                   />
                 </Form.Group>
               </Col>
-              <Col xs={10}>
+              <Col xs={12} style={{ marginTop: '15px' }}>
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Classificação</Form.Label>
                   <Form.Select
@@ -108,7 +108,7 @@ const FormComponent: React.FC = () => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col xs={10}>
+              <Col xs={12} style={{ marginTop: '15px' }}>
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Assunto</Form.Label>
                   <Form.Select
@@ -145,7 +145,7 @@ const FormComponent: React.FC = () => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col xs={10}>
+              <Col xs={12} style={{ marginTop: '15px' }}>
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Tipo de problema</Form.Label>
                   <Form.Select
@@ -181,9 +181,13 @@ const FormComponent: React.FC = () => {
                 </Form.Group>
               </Col>
 
-              <Col>
-                <Button variant="primary" type="submit">
-                  Submit
+              <Col
+                style={{ marginTop: '15px', marginBottom: '15px' }}
+                xs={12}
+                md={4}
+              >
+                <Button variant="primary" type="submit" disabled={false}>
+                  Enviar solicitação
                 </Button>
               </Col>
             </Form>
