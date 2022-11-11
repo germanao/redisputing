@@ -68,6 +68,17 @@ const Header: React.FC = () => {
             </Row>
           </Col>
         </Row>
+        <Row style={{ padding: 0, margin: 0 }}>
+          <div
+            style={{
+              minWidth: '100%',
+              alignItems: 'center',
+              height: '0',
+              border: '1px solid #9e9e9e',
+              margin: '20px 0'
+            }}
+          />
+        </Row>
       </WrapperContainer>
     </>
   )

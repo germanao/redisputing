@@ -12,7 +12,7 @@ export async function signInRequest(data: SignInRequestData) {
     password
   })
 
-  console.log(response)
+  // console.log(response)
 
   return response
 }
@@ -35,6 +35,5 @@ export async function registerInRequest(data: SignInRequestData) {
 
 export async function recoverUserInformation() {
   const { data: response } = await apiAuth.get<IAuthPut>(`/getProfile`)
-  console.log(response)
   return response
 }

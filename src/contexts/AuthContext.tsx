@@ -24,7 +24,6 @@ export function AuthProvider({ children }) {
       const { ['redisputing.token']: token } = parseCookies()
 
       if (token) {
-        console.log(token)
         const userData = await recoverUserInformation()
         if (userData) {
           const userDTO: IAuthData = {
@@ -32,7 +31,7 @@ export function AuthProvider({ children }) {
             name: userData.name,
             email: userData.email
           }
-          console.log(userDTO)
+
           setUser(userDTO)
         }
       }
