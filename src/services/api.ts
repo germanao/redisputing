@@ -13,6 +13,10 @@ export const apiAuth = axios.create({
   // baseURL: 'http://localhost:5000/api/users/'
 })
 
+export const apiCNPJ = axios.create({
+  baseURL: 'https://publica.cnpj.ws/cnpj/'
+})
+
 // apiAuth.interceptors.request.use(config => {
 //   console.log(config)
 
