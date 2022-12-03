@@ -106,9 +106,9 @@ app.post("/api/registerClient", (req, res) => {
   })
 })
 
-app.get("/api/registerClient", (req, res) => {
+app.get("/api/registerClient/:cnpj", (req, res) => {
 
-  let {cnpj} = req.body
+  let cnpj = req.params.cnpj
 
   if(!cnpj || cnpj.length != 14) {
     res.status(400).send("CNPJ não informado ou inválido")
