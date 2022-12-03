@@ -21,6 +21,11 @@ app.post("/api/registerClient", (req, res) => {
          ddd2, telefone2, atividadePrincipal, paisId,
          paisDesc, estadoId, estadoDesc, cidadeId, cidadeDesc } = req.body;
 
+  if(!CNPJ || CNPJ.length != 14) {
+     res.status(400).send("CNPJ não informado ou inválido")
+     return
+    }
+
   let SQL = `INSERT INTO client (
       CNPJ,
       nome,
@@ -90,7 +95,10 @@ app.post("/api/registerClient", (req, res) => {
           console.log(err)
           if (err.errno = 1048) {
               console.log("Valores primários estão nulos")
+              return
           }
+          res.status(404).send('Ocorreu um erro ou CNPJ já existe')
+          return
       }
       else
           console.log(result.insertId)
@@ -98,6 +106,29 @@ app.post("/api/registerClient", (req, res) => {
   })
 })
 
+app.get("/api/registerClient", (req, res) => {
+
+  let {cnpj} = req.body
+
+  if(!cnpj || cnpj.length != 14) {
+    res.status(400).send("CNPJ não informado ou inválido")
+    return
+  }
+
+  let SQL = `
+  SELECT *
+    FROM client
+   WHERE client.CNPJ = ?`;   
+
+  db.query(SQL, cnpj, (err, result) => {
+      if (err) {
+          console.log(err)
+      }
+      else
+          console.log(result)
+      res.send(result)
+  })
+})
 
 
 
