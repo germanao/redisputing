@@ -6,11 +6,11 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../contexts/AuthContext'
-import { api, apiAuth, apiCNPJ } from '../../services/api'
+import { api, apiAuth, apiCNPJ, apiCNPJInt } from '../../services/api'
 import Form from 'react-bootstrap/Form'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-bootstrap/Modal'
-import { ICNPJ } from '../../interfaces'
+import { ICNPJ, ICNPJInt } from '../../interfaces'
 
 interface IFormData {
   formBasicEmail: string
@@ -29,7 +29,7 @@ interface IError {
 
 const FormComponent: React.FC = () => {
   const { isAuthenticated, user } = useContext(AuthContext)
-  const [CNPJ, setCNPJ] = useState<ICNPJ>(null)
+  const [CNPJ, setCNPJ] = useState<ICNPJInt>(null)
   const [error, setError] = useState<IError>(null)
   const [CNPJInput, setCNPJInput] = useState<string>(null)
   const [isLoadingCNPJ, setIsLoadingCNPJ] = useState<boolean>(false)
@@ -60,22 +60,73 @@ const FormComponent: React.FC = () => {
 
   const fetchCNPJ = useCallback(
     async (cnpj: string) => {
+      setCNPJ(null)
       if (cnpj.length !== 14 || !cnpj) {
         setError({ errorType: 'CNPJ', errorDescription: 'CNPJ inválido' })
         return
       }
       setIsLoadingCNPJ(true)
       try {
-        const response = await apiCNPJ.get<ICNPJ>(`/${cnpj}`)
-        console.log(response.data)
-        setCNPJ(response.data)
-      } catch (err) {
-        console.log(err)
-        setError({
-          errorType: err.response.data.titulo,
-          errorDescription: err.response.data.detalhes
-        })
+        const responseInt = await api.get<ICNPJInt>(
+          `/api/registerClient/${cnpj}`
+        )
+        if (!responseInt.data[0]) {
+          try {
+            try {
+              const response = await apiCNPJ.get<ICNPJ>(`/${cnpj}`)
+
+              console.log(response.data)
+
+              const newCNPJ: ICNPJInt = {
+                CNPJ: response.data.estabelecimento.cnpj,
+                nome: response.data.razao_social,
+                ativa: response.data.estabelecimento.situacao_cadastral,
+                tipoLogradouro: response.data.estabelecimento.tipo_logradouro,
+                logradouro: response.data.estabelecimento.logradouro,
+                numero: response.data.estabelecimento.numero,
+                complemento: response.data.estabelecimento.complemento,
+                bairro: response.data.estabelecimento.bairro,
+                cep: response.data.estabelecimento.cep,
+                ddd1: response.data.estabelecimento.ddd1,
+                telefone1: response.data.estabelecimento.telefone1,
+                ddd2: response.data.estabelecimento.ddd2,
+                telefone2: response.data.estabelecimento.telefone2,
+                atividadePrincipal:
+                  response.data.estabelecimento.atividade_principal.descricao,
+                paisId: response.data.estabelecimento.pais.id,
+                paisDesc: response.data.estabelecimento.pais.nome,
+                estadoId: response.data.estabelecimento.estado.id,
+                estadoDesc: response.data.estabelecimento.estado.nome,
+                cidadeId: response.data.estabelecimento.cidade.id,
+                cidadeDesc: response.data.estabelecimento.cidade.nome
+              }
+
+              await api.post('/api/registerClient', newCNPJ)
+
+              setCNPJ(newCNPJ)
+            } catch (err) {
+              console.log(err)
+              setError({
+                errorType: err.response.data.titulo,
+                errorDescription: err.response.data.detalhes
+              })
+
+              setIsLoadingCNPJ(false)
+              return
+            }
+          } catch {
+            setError({
+              errorType: 'CNPJ',
+              errorDescription: 'CNPJ não encontrado'
+            })
+          }
+        } else {
+          setCNPJ(responseInt.data[0])
+        }
+      } catch {
+        setError({ errorType: 'CNPJ', errorDescription: 'CNPJ inválido' })
       }
+
       setIsLoadingCNPJ(false)
     },
     [setCNPJ]
@@ -147,19 +198,16 @@ const FormComponent: React.FC = () => {
                         }}
                       >
                         <Col xs={12}>
-                          <Row>{CNPJ.razao_social}</Row>
+                          <Row>{CNPJ.nome}</Row>
                           <Row style={{ marginTop: '4px' }}>
-                            Telefone: {CNPJ.estabelecimento.telefone1}
+                            Telefone: {CNPJ.telefone1}
                           </Row>
                           <Row style={{ marginTop: '4px' }}>
-                            {CNPJ.estabelecimento.atividade_principal.descricao}
+                            {CNPJ.atividadePrincipal}
                           </Row>
 
                           <Row style={{ marginTop: '4px' }}>
-                            {CNPJ.estabelecimento.cep} -{' '}
-                            {CNPJ.estabelecimento.cidade.nome} -{' '}
-                            {CNPJ.estabelecimento.estado.nome} -{' '}
-                            {CNPJ.estabelecimento.estado.sigla}
+                            {CNPJ.cep} - {CNPJ.cidadeDesc} - {CNPJ.estadoDesc}
                           </Row>
                         </Col>
                       </Row>

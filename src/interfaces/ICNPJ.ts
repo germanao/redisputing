@@ -136,3 +136,26 @@ export interface ICNPJ {
   simples?: any
   estabelecimento: Estabelecimento
 }
+
+export interface ICNPJInt {
+  CNPJ: number | string
+  nome: string
+  ativa: string
+  tipoLogradouro: string
+  logradouro: string
+  numero: number | string
+  complemento: string
+  bairro: string
+  cep: string
+  ddd1: string
+  telefone1: string
+  ddd2: string
+  telefone2: string
+  atividadePrincipal: string
+  paisId: string | number
+  paisDesc: string
+  estadoId: string | number
+  estadoDesc: string
+  cidadeId: string | number
+  cidadeDesc: string
+}
