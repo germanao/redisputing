@@ -50,6 +50,7 @@ const FormComponent: React.FC = () => {
   const onSubmit = async (data: IFormData) => {
     console.log(data)
     handleShow()
+    console.log(user)
   }
 
   const handleSubmitCNPJ = async (data: IFormCNPJ) => {
@@ -140,6 +141,10 @@ const FormComponent: React.FC = () => {
   useEffect(() => {
     console.log(CNPJ)
   }, [CNPJ])
+
+  useEffect(() => {
+    console.log(user)
+  }, [user])
 
   useEffect(() => {
     console.log(error)
