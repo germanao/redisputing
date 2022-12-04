@@ -64,21 +64,13 @@ export function AuthProvider({ children }) {
   }
 
   async function registerIn({ email, password, name }: SignInRequestData) {
-    try {
-      await registerInRequest({
-        email,
-        password,
-        name
-      })
+    await registerInRequest({
+      email,
+      password,
+      name
+    })
 
-      try {
-        await signIn({ email, password })
-      } catch (err) {
-        console.log(err)
-      }
-    } catch (err) {
-      console.log(err)
-    }
+    await signIn({ email, password })
   }
 
   return (

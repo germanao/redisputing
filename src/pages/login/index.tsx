@@ -17,7 +17,10 @@ const Login: React.FC = () => {
   const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const [checked, setChecked] = useState(true)
   const [error, setError] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
+
   async function handleSignIn(data) {
+    setIsLoading(true)
     if (checked) {
       try {
         await signIn(data)
@@ -35,6 +38,7 @@ const Login: React.FC = () => {
         setError(true)
       }
     }
+    setIsLoading(false)
   }
 
   const router = useRouter()
@@ -153,7 +157,13 @@ const Login: React.FC = () => {
                 </Button>
               </Row>
               <Row justify="center" style={{ margin: 0, marginTop: '10px' }}>
-                <Button type="submit">Acessar</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading
+                    ? 'Carregando...'
+                    : checked
+                    ? 'Entrar'
+                    : 'Cadastrar'}
+                </Button>
               </Row>
             </form>
           </Col>
