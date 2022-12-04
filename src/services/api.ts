@@ -13,6 +13,15 @@ export const apiAuth = axios.create({
   // baseURL: 'http://localhost:5000/api/users/'
 })
 
+export const apiCNPJ = axios.create({
+  baseURL: 'https://publica.cnpj.ws/cnpj/'
+})
+
+export const apiCNPJInt = axios.create({
+  // baseURL: 'https://redisputing.herokuapp.com/api/registerClient'
+  baseURL: 'http://localhost:5000/api/registerClient/'
+})
+
 // apiAuth.interceptors.request.use(config => {
 //   console.log(config)
 
