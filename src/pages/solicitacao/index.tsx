@@ -145,6 +145,11 @@ const FormComponent: React.FC = () => {
     console.log(error)
   }, [error])
 
+  const handleFocusInput = useCallback(() => {
+    setError(null)
+    handleShow()
+  }, [])
+
   return (
     <>
       <Modal show={show} onHide={handleClose} centered>
@@ -270,13 +275,43 @@ const FormComponent: React.FC = () => {
           <Col xs={12}>
             <Form onSubmit={handleSubmit(onSubmit)}>
               <Col xs={12}>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Informe o fornecedor</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Pesquisar por CNPJ/CPF sem pontuação"
-                  />
-                </Form.Group>
+                {CNPJ ? (
+                  <Row
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      marginTop: '15px',
+                      padding: '5px 15px',
+                      fontSize: '0.75rem',
+                      backgroundColor: 'rgba(105,105,105,0.04)'
+                    }}
+                    onClick={handleFocusInput}
+                  >
+                    <Col xs={12}>
+                      <Row>{CNPJ.nome}</Row>
+                      <Row style={{ marginTop: '4px' }}>
+                        Telefone: {CNPJ.telefone1}
+                      </Row>
+                      <Row style={{ marginTop: '4px' }}>
+                        {CNPJ.atividadePrincipal}
+                      </Row>
+
+                      <Row style={{ marginTop: '4px' }}>
+                        {CNPJ.cep} - {CNPJ.cidadeDesc} - {CNPJ.estadoDesc}
+                      </Row>
+                    </Col>
+                  </Row>
+                ) : (
+                  <Form.Group controlId="formBasicEmail">
+                    <Form.Label>Informe o fornecedor</Form.Label>
+                    <Form.Control
+                      onChange={handleFocusInput}
+                      onClick={handleFocusInput}
+                      type="text"
+                      placeholder="Pesquisar por CNPJ/CPF sem pontuação"
+                    />
+                  </Form.Group>
+                )}
               </Col>
               <Col xs={12} style={{ marginTop: '15px' }}>
                 <Form.Group controlId="formBasicEmail">
