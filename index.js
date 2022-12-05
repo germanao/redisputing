@@ -130,7 +130,53 @@ app.get("/api/registerClient/:cnpj", (req, res) => {
   })
 })
 
+app.post("/api/registerSolic", (req, res) => {
 
+  const { email, kindOfProblem, ranking, supplier} = req.body;
+
+  let SQL = 
+    ` INSERT INTO solicitacoes (email, status, supplier, kindOfProblem, ranking, creationDate, lastModified) 
+      VALUES (?, ?, ?, ?, ?, ?, ?);`;
+
+  let today = new Date();
+
+  db.query(SQL, [
+    email,
+    "AF", /* Aguardando Fornecedor */
+    supplier,
+    kindOfProblem,
+    ranking,
+    today.toISOString().slice(0,10),
+    today.toISOString().slice(0,10)
+  ], (err, result) => {
+      if (err) {
+          console.log(err)
+          res.status(err.status).send(err.message)
+      }
+      else
+          // console.log(result.insertId)
+      res.send(result)
+  })
+})
+
+app.get("/api/solic/:email", (req, res) => {
+
+  let email = req.params.email
+
+  let SQL = `
+  SELECT *
+    FROM solicitacoes
+   WHERE solicitacoes.email = ?`;   
+
+  db.query(SQL, email, (err, result) => {
+      if (err) {
+          res.status(err.status).send(err.message)
+      }
+      else
+          // console.log(result)
+      res.send(result)
+  })
+})
 
 const PORT = process.env.PORT || 5001;
 
