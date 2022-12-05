@@ -14,11 +14,11 @@ const Dashboard: React.FC = () => {
   const router = useRouter()
 
   // TODO: Descomentar ao final do desenvolvimento
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push('/login')
-  //   }
-  // }, [isAuthenticated, router])
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, router])
 
   return (
     <>

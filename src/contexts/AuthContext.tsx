@@ -60,7 +60,7 @@ export function AuthProvider({ children }) {
 
     setUser(userData)
 
-    Router.push('/home')
+    Router.back()
   }
 
   async function registerIn({ email, password, name }: SignInRequestData) {

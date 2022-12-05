@@ -40,12 +40,11 @@ const FormComponent: React.FC = () => {
     formState: { errors }
   } = useForm()
 
-  // TODO: Descomentar ao final do desenvolvimento
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push('/login')
-  //   }
-  // }, [isAuthenticated, router])
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, router])
 
   const onSubmit = async (data: IFormData) => {
     console.log(data)
@@ -137,18 +136,6 @@ const FormComponent: React.FC = () => {
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-
-  useEffect(() => {
-    console.log(CNPJ)
-  }, [CNPJ])
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
-
-  useEffect(() => {
-    console.log(error)
-  }, [error])
 
   const handleFocusInput = useCallback(() => {
     setError(null)

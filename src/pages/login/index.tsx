@@ -45,7 +45,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(process.env.NEXT_PUBLIC_ENV_HOME)
+      router.back()
     }
   }, [isAuthenticated, router])
 
@@ -168,8 +168,8 @@ const Login: React.FC = () => {
             </form>
           </Col>
         </Row>
-        {error ? (
-          checked ? (
+        {error &&
+          (checked ? (
             <Row
               justify="center"
               style={{ margin: 0, marginTop: '10px', color: 'red' }}
@@ -183,8 +183,7 @@ const Login: React.FC = () => {
             >
               <div>E-mail já cadastrado</div>
             </Row>
-          )
-        ) : null}
+          ))}
       </Container>
     </>
   )
