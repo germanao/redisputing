@@ -8,16 +8,25 @@ import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
 const Login: React.FC = () => {
+  const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm()
 
-  const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const [checked, setChecked] = useState(true)
   const [error, setError] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // router.back()
+      router.push('/home')
+    }
+  }, [isAuthenticated, router])
 
   async function handleSignIn(data) {
     setIsLoading(true)
@@ -40,14 +49,6 @@ const Login: React.FC = () => {
     }
     setIsLoading(false)
   }
-
-  const router = useRouter()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.back()
-    }
-  }, [isAuthenticated, router])
 
   useEffect(() => {
     setError(false)
@@ -191,20 +192,20 @@ const Login: React.FC = () => {
 
 export default Login
 
-export const getServersideProps: GetServerSideProps = async ctx => {
-  const { ['redisputing.token']: token } = parseCookies(ctx)
+// export const getServersideProps: GetServerSideProps = async ctx => {
+//   const { ['redisputing.token']: token } = parseCookies(ctx)
 
-  console.log(token)
-  if (token) {
-    return {
-      redirect: {
-        destination: '/home',
-        permanent: false
-      }
-    }
-  }
+//   console.log(token)
+//   if (token) {
+//     return {
+//       redirect: {
+//         destination: '/home',
+//         permanent: false
+//       }
+//     }
+//   }
 
-  return {
-    props: {}
-  }
-}
+//   return {
+//     props: {}
+//   }
+// }

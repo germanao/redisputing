@@ -2,23 +2,108 @@ import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
-import React, { useContext, useEffect } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../contexts/AuthContext'
 import { api, apiAuth } from '../../services/api'
+import { ICNPJInt, ISolic } from '../../interfaces'
+import { List } from './list/list'
+
+interface IDashCard extends ISolic, ICNPJInt {}
 
 const Dashboard: React.FC = () => {
   const { isAuthenticated, user } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [erro, setError] = useState(false)
+  const [solics, setSolics] = useState<IDashCard[]>([] as IDashCard[])
+  const [supplier, setSupplier] = useState<ICNPJInt>({} as ICNPJInt)
 
   const router = useRouter()
+  const returnStatusDesc = useCallback((status: string) => {
+    switch (status) {
+      case 'AF':
+        return 'Aguardando fornecedor'
+      case 'As':
+        return 'Aguardando solicitante'
+      case 'Fs':
+        return 'Finalizada com sucesso'
+      case 'Fp':
+        return 'Finalizada com pendência jurídica'
+      case 'Ss':
+        return 'Finalizada sem solução'
+    }
+  }, [])
 
-  // TODO: Descomentar ao final do desenvolvimento
+  const returnProblemDesc = useCallback((kindOfProblem: number) => {
+    switch (kindOfProblem) {
+      case 1:
+        return 'Dívida ativa'
+      case 2:
+        return 'Inadimplência'
+    }
+  }, [])
+
+  const returnRankingDesc = useCallback((ranking: number) => {
+    switch (ranking) {
+      case 1:
+        return 'Bens e consumo'
+      case 2:
+        return 'Serviços'
+    }
+  }, [])
+
+  const returnSubjectDesc = useCallback((subject: number) => {
+    switch (subject) {
+      case 1:
+        return 'Renegociação de produtos e serviços'
+      case 2:
+        return 'Renegociação da dívida'
+    }
+  }, [])
   useEffect(() => {
+    console.log(isAuthenticated)
     if (!isAuthenticated) {
       router.push('/login')
     }
   }, [isAuthenticated, router])
+
+  const fetchCNPJ = useCallback(async (cnpj: string) => {
+    const responseCNPJ = await api.get<ICNPJInt>(`/api/registerClient/${cnpj}`)
+    return responseCNPJ.data[0]
+  }, [])
+
+  const fetchSolics = useCallback(async () => {
+    if (isAuthenticated) {
+      setIsLoading(true)
+      try {
+        const response = await api.get<ISolic[]>(`/api/solic/${user?.email}`)
+
+        const supplier = await fetchCNPJ(response.data[0].supplier)
+
+        const newObject = response.data.map(solic => {
+          return {
+            ...solic,
+            ...supplier
+          }
+        })
+        setSolics(newObject)
+
+        console.log(response)
+      } catch (err) {
+        setError(err.response?.data)
+      }
+      setIsLoading(false)
+    }
+  }, [fetchCNPJ, isAuthenticated, user?.email])
+
+  useEffect(() => {
+    fetchSolics()
+  }, [fetchSolics])
+
+  useEffect(() => {
+    console.log(solics)
+  }, [solics])
 
   return (
     <>
@@ -63,40 +148,50 @@ const Dashboard: React.FC = () => {
                   // flexBasis: '85%'
                 }}
               >
-                <Row style={{ margin: 0, padding: 0 }}>
-                  <Col
-                    xs={1}
-                    style={{
-                      background: 'yellow',
-                      margin: 0,
-                      padding: 0,
-                      minHeight: '5vh',
-                      width: 'auto',
-                      marginTop: '15px',
-                      border: '1px solid black'
-                    }}
-                  ></Col>
-                  <Col
-                    xs={11}
-                    style={{
-                      border: '1px solid #727272',
-                      margin: '0',
-                      minHeight: '5vh',
-                      width: 'auto',
-                      marginTop: '15px',
-                      padding: '15px 15px 15px 30px'
-                    }}
-                  >
-                    <Row>ID: 31412</Row>
-                    <Row>Instituição: Mercado Livre</Row>
-                    <Row>Aquisição: 25/12/2021</Row>
-                    <Row>Negociação: 06/02/2022</Row>
-                    <Row>Negociação: 06/02/2022</Row>
-                    <Row>Negociação: 06/02/2022</Row>
-                    <Row>Negociação: 06/02/2022</Row>
-                    <Row></Row>
-                  </Col>
-                </Row>
+                <>
+                  {solics.map((solic, index) => (
+                    <Row key={index} style={{ margin: 0, padding: 0 }}>
+                      <Col
+                        xs={1}
+                        style={{
+                          background: 'yellow',
+                          margin: 0,
+                          padding: 0,
+                          minHeight: '5vh',
+                          width: 'auto',
+                          marginTop: '15px',
+                          border: '1px solid black'
+                        }}
+                      ></Col>
+                      <Col
+                        xs={11}
+                        style={{
+                          border: '1px solid #727272',
+                          margin: '0',
+                          minHeight: '5vh',
+                          width: 'auto',
+                          marginTop: '15px',
+                          padding: '15px 15px 15px 30px'
+                        }}
+                      >
+                        <Row>ID: {solic.id}</Row>
+                        <Row>Instituição: {solic.nome}</Row>
+                        <Row>CNPJ: {solic.CNPJ}</Row>
+                        <Row>
+                          Data de abertura:{' '}
+                          {new Date(solic?.creationDate).toLocaleDateString()}
+                        </Row>
+                        <Row>
+                          Classificação: {returnRankingDesc(solic.ranking)}{' '}
+                          {'->'} {returnSubjectDesc(1)} {'->'}{' '}
+                          {returnProblemDesc(solic.kindOfProblem)}
+                        </Row>
+                        <Row></Row>
+                      </Col>
+                    </Row>
+                  ))}
+                </>
+
                 <Row style={{ margin: 0, padding: 0 }}>
                   <Col
                     xs={1}

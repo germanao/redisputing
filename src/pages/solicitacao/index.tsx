@@ -47,9 +47,13 @@ const FormComponent: React.FC = () => {
   }, [isAuthenticated, router])
 
   const onSubmit = async (data: IFormData) => {
-    console.log(data)
-    handleShow()
-    console.log(user)
+    const json = {
+      email: user.email,
+      ...data
+    }
+
+    const response = await api.post(`/api/registerSolic`, json)
+    router.push(`/solicitacao/${response.data.insertId}`)
   }
 
   const handleSubmitCNPJ = async (data: IFormCNPJ) => {

@@ -5,20 +5,9 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../../contexts/AuthContext'
-import { ICNPJInt } from '../../../interfaces'
+import { ICNPJInt, ISolic } from '../../../interfaces'
 import { api } from '../../../services/api'
 import { Divider } from './styles'
-
-interface ISolic {
-  id: number
-  email: string
-  status: string
-  supplier: string
-  kindOfProblem: number
-  ranking: number
-  creationDate?: Date
-  lastModified?: Date
-}
 
 const SolicDetail: React.FC = () => {
   const { isAuthenticated, user } = useContext(AuthContext)
@@ -78,6 +67,39 @@ const SolicDetail: React.FC = () => {
         return 'Finalizada com pendência jurídica'
       case 'Ss':
         return 'Finalizada sem solução'
+      default:
+        return 'Status não encontrado'
+    }
+  }, [])
+
+  const returnProblemDesc = useCallback((kindOfProblem: number) => {
+    switch (kindOfProblem) {
+      case 1:
+        return 'Dívida ativa'
+      case 2:
+        return 'Inadimplência'
+      default:
+        return 'Problema não encontrado'
+    }
+  }, [])
+
+  const returnRankingDesc = useCallback((ranking: number) => {
+    switch (ranking) {
+      case 1:
+        return 'Bens e consumo'
+      case 2:
+        return 'Serviços'
+      default:
+        return 'Não encontrado'
+    }
+  }, [])
+
+  const returnSubjectDesc = useCallback((subject: number) => {
+    switch (subject) {
+      case 1:
+        return 'Renegociação de produtos e serviços'
+      case 2:
+        return 'Renegociação da dívida'
     }
   }, [])
 
@@ -96,7 +118,7 @@ const SolicDetail: React.FC = () => {
               ID da solicitação: {detailId}
             </Row>
             <Row style={{ padding: 0, margin: 0 }}>
-              Status: {returnStatusDesc(solic.status)}
+              Status: {returnStatusDesc(solic?.status)}
             </Row>
           </Col>
         </Row>
@@ -114,15 +136,15 @@ const SolicDetail: React.FC = () => {
         <Row style={{ margin: 0 }}>
           <Col>
             <Row style={{ padding: 0, margin: 0 }}>
-              Fornecedor: {supplier.nome}
+              Fornecedor: {supplier?.nome}
             </Row>
-            <Row style={{ padding: 0, margin: 0 }}>CNPJ: {solic.supplier}</Row>
+            <Row style={{ padding: 0, margin: 0 }}>CNPJ: {solic?.supplier}</Row>
             <Row style={{ padding: 0, margin: 0 }}>
-              Telefone: ({supplier.ddd1}) - {supplier.telefone1}
+              Telefone: ({supplier?.ddd1}) - {supplier?.telefone1}
             </Row>
             <Row style={{ padding: 0, margin: 0 }}>
-              Endereço: {supplier.cep} - {supplier.cidadeDesc} -{' '}
-              {supplier.estadoDesc}
+              Endereço: {supplier?.cep} - {supplier?.cidadeDesc} -{' '}
+              {supplier?.estadoDesc}
             </Row>
           </Col>
         </Row>
@@ -139,13 +161,21 @@ const SolicDetail: React.FC = () => {
         </Row>
         <Row style={{ margin: 0 }}>
           <Col>
-            <Row style={{ padding: 0, margin: 0 }}>Classificação:</Row>
+            <Row style={{ padding: 0, margin: 0 }}>
+              Classificação: {returnRankingDesc(solic?.ranking)} {'->'}{' '}
+              {returnSubjectDesc(solic?.subject)} {'->'}{' '}
+              {returnProblemDesc(solic?.kindOfProblem)}
+            </Row>
           </Col>
         </Row>
         <Row style={{ margin: 0 }}>
           <Col>
-            <Row style={{ padding: 0, margin: 0 }}>Data da ocorrência:</Row>
-            <Row style={{ padding: 0, margin: 0 }}>Data de abertura:</Row>
+            <Row style={{ padding: 0, margin: 0 }}>
+              <p>
+                Data de abertura:{' '}
+                {new Date(solic?.creationDate).toLocaleDateString()}
+              </p>
+            </Row>
           </Col>
         </Row>
         <Row style={{ padding: 0, margin: 0, justifyContent: 'center' }}>

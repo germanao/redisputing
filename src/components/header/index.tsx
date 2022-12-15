@@ -60,7 +60,11 @@ const Header: React.FC = () => {
                 {isAuthenticated ? (
                   <div>{user.name}</div>
                 ) : (
-                  <Button variant="primary" style={{ width: '100%' }}>
+                  <Button
+                    variant="primary"
+                    style={{ width: '100%' }}
+                    onClick={() => Router.push('/login')}
+                  >
                     Acessar
                   </Button>
                 )}
