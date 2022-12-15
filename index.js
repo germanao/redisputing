@@ -132,11 +132,11 @@ app.get("/api/registerClient/:cnpj", (req, res) => {
 
 app.post("/api/registerSolic", (req, res) => {
 
-  const { email, kindOfProblem, ranking, supplier} = req.body;
+  const { email, kindOfProblem, ranking, supplier, subject} = req.body;
 
   let SQL = 
-    ` INSERT INTO solicitacoes (email, status, supplier, kindOfProblem, ranking, creationDate, lastModified) 
-      VALUES (?, ?, ?, ?, ?, ?, ?);`;
+    ` INSERT INTO solicitacoes (email, status, supplier, kindOfProblem, ranking, creationDate, lastModified, subject) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
 
   let today = new Date();
 
@@ -147,7 +147,8 @@ app.post("/api/registerSolic", (req, res) => {
     kindOfProblem,
     ranking,
     today.toISOString().slice(0,10),
-    today.toISOString().slice(0,10)
+    today.toISOString().slice(0,10),
+    subject
   ], (err, result) => {
       if (err) {
           console.log(err)
