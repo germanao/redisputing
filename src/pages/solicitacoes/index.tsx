@@ -10,6 +10,8 @@ import { api, apiAuth } from '../../services/api'
 import { ICNPJInt, ISolic } from '../../interfaces'
 import { List } from './list/list'
 
+import { FiEye } from 'react-icons/fi'
+
 interface IDashCard extends ISolic, ICNPJInt {}
 
 const Dashboard: React.FC = () => {
@@ -171,9 +173,27 @@ const Dashboard: React.FC = () => {
                           minHeight: '5vh',
                           width: 'auto',
                           marginTop: '15px',
-                          padding: '15px 15px 15px 30px'
+                          padding: '15px 15px 15px 35px'
                         }}
                       >
+                        <Row
+                          style={{
+                            margin: 0,
+                            justifyContent: 'flex-end'
+                          }}
+                        >
+                          <Button
+                            onClick={() =>
+                              router.push(`/solicitacao/${solic.id}`)
+                            }
+                            style={{
+                              fontSize: '25px',
+                              padding: '1px 5px 1px 5px'
+                            }}
+                          >
+                            <FiEye />
+                          </Button>
+                        </Row>
                         <Row>ID: {solic.id}</Row>
                         <Row>Instituição: {solic.nome}</Row>
                         <Row>CNPJ: {solic.CNPJ}</Row>

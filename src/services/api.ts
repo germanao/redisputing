@@ -4,7 +4,8 @@ import { parseCookies } from 'nookies'
 const { 'redisputing.token': token } = parseCookies()
 
 export const api = axios.create({
-  baseURL: 'http://localhost:5000'
+  // baseURL: 'http://localhost:5000'
+  baseURL: 'https://redisputing.herokuapp.com/'
 })
 
 // TODO: Verificar se a '/' ao final vai dar problema
@@ -18,8 +19,8 @@ export const apiCNPJ = axios.create({
 })
 
 export const apiCNPJInt = axios.create({
-  // baseURL: 'https://redisputing.herokuapp.com/api/registerClient'
-  baseURL: 'http://localhost:5000/api/registerClient/'
+  baseURL: 'https://redisputing.herokuapp.com/api/registerClient'
+  // baseURL: 'http://localhost:5000/api/registerClient/'
 })
 
 // apiAuth.interceptors.request.use(config => {
