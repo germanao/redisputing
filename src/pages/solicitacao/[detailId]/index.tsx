@@ -7,7 +7,6 @@ import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../../contexts/AuthContext'
 import { ICNPJInt, ISolic } from '../../../interfaces'
 import { api } from '../../../services/api'
-import { Divider } from './styles'
 
 const SolicDetail: React.FC = () => {
   const { isAuthenticated, user } = useContext(AuthContext)
@@ -18,10 +17,8 @@ const SolicDetail: React.FC = () => {
 
   const router = useRouter()
   const { detailId } = router.query
-  console.log(router.query)
 
   useEffect(() => {
-    console.log(isAuthenticated)
     if (!isAuthenticated) {
       router.push('/login')
     }
@@ -45,7 +42,6 @@ const SolicDetail: React.FC = () => {
           await fetchCNPJ(
             response.data.find(solic => solic.id === Number(id))?.supplier
           )
-          console.log(response)
         } catch (err) {
           setError(err.response.data)
         }
@@ -238,7 +234,6 @@ export default SolicDetail
 export const getServersideProps: GetServerSideProps = async ctx => {
   const { ['redisputing.token']: token } = parseCookies(ctx)
 
-  console.log(token)
   if (!token) {
     return {
       redirect: {

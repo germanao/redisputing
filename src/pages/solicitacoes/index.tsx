@@ -1,14 +1,12 @@
 import { GetServerSideProps } from 'next'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../contexts/AuthContext'
-import { api, apiAuth } from '../../services/api'
+import { api } from '../../services/api'
 import { ICNPJInt, ISolic } from '../../interfaces'
-import { List } from './list/list'
 
 import { FiEye } from 'react-icons/fi'
 
@@ -19,23 +17,8 @@ const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [erro, setError] = useState(false)
   const [solics, setSolics] = useState<IDashCard[]>([] as IDashCard[])
-  const [supplier, setSupplier] = useState<ICNPJInt>({} as ICNPJInt)
 
   const router = useRouter()
-  const returnStatusDesc = useCallback((status: string) => {
-    switch (status) {
-      case 'AF':
-        return 'Aguardando fornecedor'
-      case 'As':
-        return 'Aguardando solicitante'
-      case 'Fs':
-        return 'Finalizada com sucesso'
-      case 'Fp':
-        return 'Finalizada com pendência jurídica'
-      case 'Ss':
-        return 'Finalizada sem solução'
-    }
-  }, [])
 
   const returnProblemDesc = useCallback((kindOfProblem: number) => {
     switch (kindOfProblem) {
@@ -64,7 +47,6 @@ const Dashboard: React.FC = () => {
     }
   }, [])
   useEffect(() => {
-    console.log(isAuthenticated)
     if (!isAuthenticated) {
       router.push('/login')
     }
@@ -90,8 +72,6 @@ const Dashboard: React.FC = () => {
           }
         })
         setSolics(newObject)
-
-        console.log(response)
       } catch (err) {
         setError(err.response?.data)
       }
@@ -102,10 +82,6 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     fetchSolics()
   }, [fetchSolics])
-
-  useEffect(() => {
-    console.log(solics)
-  }, [solics])
 
   return (
     <>
@@ -362,7 +338,6 @@ export default Dashboard
 export const getServersideProps: GetServerSideProps = async ctx => {
   const { ['redisputing.token']: token } = parseCookies(ctx)
 
-  console.log(token)
   if (!token) {
     return {
       redirect: {

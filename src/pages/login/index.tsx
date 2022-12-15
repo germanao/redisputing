@@ -5,8 +5,6 @@ import { Button } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { AuthContext } from '../../contexts/AuthContext'
 import { useRouter } from 'next/router'
-import { GetServerSideProps } from 'next'
-import { parseCookies } from 'nookies'
 const Login: React.FC = () => {
   const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const {
@@ -35,7 +33,6 @@ const Login: React.FC = () => {
         await signIn(data)
         setError(false)
       } catch (err) {
-        console.log(err)
         setError(true)
       }
     } else {
@@ -43,7 +40,6 @@ const Login: React.FC = () => {
         await registerIn(data)
         setError(false)
       } catch (err) {
-        console.log(err)
         setError(true)
       }
     }
