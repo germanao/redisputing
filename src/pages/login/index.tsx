@@ -5,25 +5,34 @@ import { Button } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { AuthContext } from '../../contexts/AuthContext'
 import { useRouter } from 'next/router'
-import { GetServerSideProps } from 'next'
-import { parseCookies } from 'nookies'
 const Login: React.FC = () => {
+  const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm()
 
-  const { signIn, isAuthenticated, registerIn } = useContext(AuthContext)
   const [checked, setChecked] = useState(true)
   const [error, setError] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // router.back()
+      router.push('/home')
+    }
+  }, [isAuthenticated, router])
+
   async function handleSignIn(data) {
+    setIsLoading(true)
     if (checked) {
       try {
         await signIn(data)
         setError(false)
       } catch (err) {
-        console.log(err)
         setError(true)
       }
     } else {
@@ -31,19 +40,11 @@ const Login: React.FC = () => {
         await registerIn(data)
         setError(false)
       } catch (err) {
-        console.log(err)
         setError(true)
       }
     }
+    setIsLoading(false)
   }
-
-  const router = useRouter()
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push(process.env.NEXT_PUBLIC_ENV_HOME)
-    }
-  }, [isAuthenticated, router])
 
   useEffect(() => {
     setError(false)
@@ -153,13 +154,19 @@ const Login: React.FC = () => {
                 </Button>
               </Row>
               <Row justify="center" style={{ margin: 0, marginTop: '10px' }}>
-                <Button type="submit">Acessar</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading
+                    ? 'Carregando...'
+                    : checked
+                    ? 'Entrar'
+                    : 'Cadastrar'}
+                </Button>
               </Row>
             </form>
           </Col>
         </Row>
-        {error ? (
-          checked ? (
+        {error &&
+          (checked ? (
             <Row
               justify="center"
               style={{ margin: 0, marginTop: '10px', color: 'red' }}
@@ -173,8 +180,7 @@ const Login: React.FC = () => {
             >
               <div>E-mail já cadastrado</div>
             </Row>
-          )
-        ) : null}
+          ))}
       </Container>
     </>
   )
@@ -182,20 +188,20 @@ const Login: React.FC = () => {
 
 export default Login
 
-export const getServersideProps: GetServerSideProps = async ctx => {
-  const { ['redisputing.token']: token } = parseCookies(ctx)
+// export const getServersideProps: GetServerSideProps = async ctx => {
+//   const { ['redisputing.token']: token } = parseCookies(ctx)
 
-  console.log(token)
-  if (token) {
-    return {
-      redirect: {
-        destination: '/home',
-        permanent: false
-      }
-    }
-  }
+//   console.log(token)
+//   if (token) {
+//     return {
+//       redirect: {
+//         destination: '/home',
+//         permanent: false
+//       }
+//     }
+//   }
 
-  return {
-    props: {}
-  }
-}
+//   return {
+//     props: {}
+//   }
+// }

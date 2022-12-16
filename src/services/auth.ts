@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid'
 import { SignInRequestData, IAuthData, IAuthPut } from '../interfaces'
 import { apiAuth } from './api'
 
@@ -27,8 +26,6 @@ export async function registerInRequest(data: SignInRequestData) {
     password,
     name
   })
-
-  console.log(response)
 
   return response
 }

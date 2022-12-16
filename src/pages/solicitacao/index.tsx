@@ -1,12 +1,11 @@
 import { GetServerSideProps } from 'next'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { Container, Row, Col } from 'react-grid-system'
 import { AuthContext } from '../../contexts/AuthContext'
-import { api, apiAuth, apiCNPJ, apiCNPJInt } from '../../services/api'
+import { api, apiCNPJ } from '../../services/api'
 import Form from 'react-bootstrap/Form'
 import { useForm } from 'react-hook-form'
 import Modal from 'react-bootstrap/Modal'
@@ -34,28 +33,27 @@ const FormComponent: React.FC = () => {
   const [CNPJInput, setCNPJInput] = useState<string>(null)
   const [isLoadingCNPJ, setIsLoadingCNPJ] = useState<boolean>(false)
   const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm()
+  const { register, handleSubmit } = useForm()
 
-  // TODO: Descomentar ao final do desenvolvimento
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push('/login')
-  //   }
-  // }, [isAuthenticated, router])
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, router])
 
   const onSubmit = async (data: IFormData) => {
-    console.log(data)
-    handleShow()
-    console.log(user)
+    const json = {
+      email: user.email,
+      ...data
+    }
+
+    const response = await api.post(`/api/registerSolic`, json)
+    router.push(`/solicitacao/${response.data.insertId}`)
   }
 
   const handleSubmitCNPJ = async (data: IFormCNPJ) => {
     setError(null)
-    console.log(data)
+
     await fetchCNPJ(data.supplier)
   }
 
@@ -75,8 +73,6 @@ const FormComponent: React.FC = () => {
           try {
             try {
               const response = await apiCNPJ.get<ICNPJ>(`/${cnpj}`)
-
-              console.log(response.data)
 
               const newCNPJ: ICNPJInt = {
                 CNPJ: response.data.estabelecimento.cnpj,
@@ -106,7 +102,6 @@ const FormComponent: React.FC = () => {
 
               setCNPJ(newCNPJ)
             } catch (err) {
-              console.log(err)
               setError({
                 errorType: err.response.data.titulo,
                 errorDescription: err.response.data.detalhes
@@ -137,18 +132,6 @@ const FormComponent: React.FC = () => {
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-
-  useEffect(() => {
-    console.log(CNPJ)
-  }, [CNPJ])
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
-
-  useEffect(() => {
-    console.log(error)
-  }, [error])
 
   const handleFocusInput = useCallback(() => {
     setError(null)
@@ -448,7 +431,6 @@ export default FormComponent
 export const getServersideProps: GetServerSideProps = async ctx => {
   const { ['redisputing.token']: token } = parseCookies(ctx)
 
-  console.log(token)
   if (!token) {
     return {
       redirect: {
